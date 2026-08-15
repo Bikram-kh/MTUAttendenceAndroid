@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTU Attendance Portal</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img src="mtu-logo.png" alt="MTU Logo" class="logo">
+                <div class="brand-text">
+                    <h1 class="brand-title">MTU Portal</h1>
+                    <p class="brand-subtitle">Attendance Management System</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="loading-screen" class="loading-overlay">
+        <img src="mtu-logo.png" alt="MTU Logo" class="loading-logo">
+        <div class="spinner"></div>
+        <h2>Loading MTU Portal...</h2>
+    </div>
+
+    <main id="main-app-container" class="container"></main>
+
+    <script src="app.js"></script>
+</body>
+</html>

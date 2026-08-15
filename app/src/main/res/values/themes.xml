@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.MTUAttendance" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:navigationBarColor">#0A0E27</item>
+        <item name="android:statusBarColor">#0A0E27</item>
+    </style>
+</resources>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "160991404161",
+    "project_id": "attendants-mtu",
+    "storage_bucket": "attendants-mtu.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160991404161:android:ac8151cc97e5dc75822d80",
+        "android_client_info": {
+          "package_name": "com.mtu.attendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "160991404161-rrntsc4ar8ceo81t5obtiki2buieiull.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDK2n5gz8n5LULNCBo05YStcx1Sca6yyDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "160991404161-rrntsc4ar8ceo81t5obtiki2buieiull.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
