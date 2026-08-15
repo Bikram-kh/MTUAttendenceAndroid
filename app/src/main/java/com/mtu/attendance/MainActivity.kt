@@ -2,7 +2,6 @@ package com.mtu.attendance
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +11,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.credentials.CredentialManager
@@ -24,14 +24,13 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class MainActivity : Activity() {
+class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
     private lateinit var credentialManager: CredentialManager
 
     private val locationRequestCode = 1001
 
-    // This is generated from the Web OAuth client in google-services.json.
     private val webClientId: String by lazy {
         getString(R.string.default_web_client_id)
     }
@@ -49,23 +48,26 @@ class MainActivity : Activity() {
             javaScriptEnabled = true
             domStorageEnabled = true
             databaseEnabled = true
-            geolocationEnabled = true
             allowFileAccess = true
             allowContentAccess = true
             cacheMode = WebSettings.LOAD_DEFAULT
+
+            // Use the method explicitly instead of the Kotlin property.
+            setGeolocationEnabled(true)
         }
 
-        // The page only exposes one native action: starting Google Sign-In.
         webView.addJavascriptInterface(AndroidBridge(), "AndroidMTU")
 
         webView.webViewClient = WebViewClient()
 
         webView.webChromeClient = object : WebChromeClient() {
+
             override fun onGeolocationPermissionsShowPrompt(
                 origin: String?,
                 callback: GeolocationPermissions.Callback?
             ) {
-                if (ContextCompat.checkSelfPermission(
+                if (
+                    ContextCompat.checkSelfPermission(
                         this@MainActivity,
                         Manifest.permission.ACCESS_FINE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
@@ -85,6 +87,7 @@ class MainActivity : Activity() {
         }
 
         requestLocationIfNeeded()
+
         webView.loadUrl("file:///android_asset/index.html")
     }
 
@@ -97,21 +100,27 @@ class MainActivity : Activity() {
     }
 
     private fun beginGoogleSignIn() {
+
         lifecycleScope.launch {
+
             try {
-                val googleIdOption = GetGoogleIdOption.Builder()
-                    .setServerClientId(webClientId)
-                    .setFilterByAuthorizedAccounts(false)
-                    .build()
 
-                val request = GetCredentialRequest.Builder()
-                    .addCredentialOption(googleIdOption)
-                    .build()
+                val googleIdOption =
+                    GetGoogleIdOption.Builder()
+                        .setServerClientId(webClientId)
+                        .setFilterByAuthorizedAccounts(false)
+                        .build()
 
-                val result = credentialManager.getCredential(
-                    context = this@MainActivity,
-                    request = request
-                )
+                val request =
+                    GetCredentialRequest.Builder()
+                        .addCredentialOption(googleIdOption)
+                        .build()
+
+                val result =
+                    credentialManager.getCredential(
+                        context = this@MainActivity,
+                        request = request
+                    )
 
                 val credential = result.credential
 
@@ -120,9 +129,13 @@ class MainActivity : Activity() {
                     credential.type ==
                     GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
                 ) {
+
                     try {
+
                         val googleCredential =
-                            GoogleIdTokenCredential.createFrom(credential.data)
+                            GoogleIdTokenCredential.createFrom(
+                                credential.data
+                            )
 
                         val idToken = googleCredential.idToken
                         val quotedToken = JSONObject.quote(idToken)
@@ -133,38 +146,69 @@ class MainActivity : Activity() {
                                 null
                             )
                         }
+
                     } catch (e: GoogleIdTokenParsingException) {
-                        Log.e("MTU_AUTH", "Could not parse Google ID token", e)
-                        showLoginError("Could not read the Google sign-in response.")
+
+                        Log.e(
+                            "MTU_AUTH",
+                            "Could not parse Google ID token",
+                            e
+                        )
+
+                        showLoginError(
+                            "Could not read the Google sign-in response."
+                        )
                     }
+
                 } else {
-                    Log.e("MTU_AUTH", "Unexpected credential type: ${credential.type}")
-                    showLoginError("Google sign-in returned an unsupported credential.")
+
+                    Log.e(
+                        "MTU_AUTH",
+                        "Unexpected credential type: ${credential.type}"
+                    )
+
+                    showLoginError(
+                        "Google sign-in returned an unsupported credential."
+                    )
                 }
 
             } catch (e: Exception) {
-                Log.e("MTU_AUTH", "Google sign-in failed", e)
+
+                Log.e(
+                    "MTU_AUTH",
+                    "Google sign-in failed",
+                    e
+                )
+
                 showLoginError(
-                    e.message ?: "Google sign-in was cancelled or failed."
+                    e.message
+                        ?: "Google sign-in was cancelled or failed."
                 )
             }
         }
     }
 
     private fun showLoginError(message: String) {
+
         val quoted = JSONObject.quote(message)
 
         webView.post {
-            webView.evaluateJavascript("alert($quoted);", null)
+            webView.evaluateJavascript(
+                "alert($quoted);",
+                null
+            )
         }
     }
 
     private fun requestLocationIfNeeded() {
-        if (ContextCompat.checkSelfPermission(
+
+        if (
+            ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(
@@ -181,12 +225,19 @@ class MainActivity : Activity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        super.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults
+        )
+
         webView.reload()
     }
 
     @Deprecated("Deprecated in Android API 33")
     override fun onBackPressed() {
+
         if (webView.canGoBack()) {
             webView.goBack()
         } else {
